@@ -71,44 +71,77 @@ void MCP2515::messageTransmit(String input)
     MCP2515::writeRegister(0x31, 0x7D);  
     MCP2515::writeRegister(0x32, 0xF0);  
     MCP2515::writeRegister(0x35, 0x08);
-    int lenght = input.length();
+    String modifiedInput = "";
+    modifiedInput = input + '|';
+    int lenght = modifiedInput.length();
     while(lenght > j*8)
     {
         for (size_t i = 0; i < 8; i++)
         {
-            MCP2515::writeRegister(54+i , input[i+8*j]);
+            MCP2515::writeRegister(54+i , modifiedInput[i+8*j]);
         }
         MCP2515::writeRegister(0x30, 0x08);
-        delay(100);
+        delay(5);
         j += 1;
     }
 }
 
+String received8byte;
 void MCP2515::dataReader() {
     uint8_t intFlags = MCP2515::readRegister(0x2C); // Kesme bayraklarını oku
+    int test = 0;
     if (intFlags & 0x01)  // RX0IF bayrağı ayarlandıysa
     {
-        receivedMessage = "";
         for (uint8_t i = 0; i < 8; i++)
         {
             char character = (char)MCP2515::readRegister(0x66 + i);
-            receivedMessage += character;
+            if(character == '|')
+            {
+                test = 1;
+                break;
+            }
+            else
+            {
+                received8byte += character;
+            }
         }
-        Serial.print(receivedMessage);        
+        receivedMessage += received8byte;
+        if(test == 1)
+        {
+            Serial.println(receivedMessage);
+            receivedMessage = "";
+            test = 0;
+        }
+        received8byte = "";
         MCP2515::writeRegister(0x2C, intFlags & ~0x01);
     }
     if (intFlags & 0x02)  // RX1IF bayrağı ayarlandıysa
     {
-        String receivedMessage = "";
         for (uint8_t i = 0; i < 8; i++)
         {
             char character = (char)MCP2515::readRegister(0x66 + i);
-            receivedMessage += character;
+            if(character == '|')
+            {
+                test = 1;
+                break;
+            }
+            else
+            {
+                received8byte += character;
+            }        
         }
-        Serial.print(receivedMessage);
+        receivedMessage += received8byte;
+        if(test == 1)
+        {
+            Serial.println(receivedMessage);
+            receivedMessage = "";
+            test = 0;
+        }
+        received8byte = "";
         MCP2515::writeRegister(0x2C, intFlags & ~0x02);
     }    
 }
+
 
 
 //csPin function

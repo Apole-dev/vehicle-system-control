@@ -45,4 +45,3 @@ enum baudRate{
     BAUD_500kbps,
     BAUD_1000kbps,
 };
-
