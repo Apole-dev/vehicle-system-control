@@ -65,7 +65,7 @@ void setup() {
     //readDataSerial.begin(9600);
 
     delay(100);
-    myLoraSerial->listen();
+
 }
 
 void loop() {
@@ -98,10 +98,7 @@ void loop() {
         lora->SendData(myConfig,gpsData.latitude);
         lora->SendData(myConfig,gpsData.longitude);
         lora->SendData(myConfig,gpsData.velocity);
-    } 
-
-    uint8_t exampleData[4] = {0x03,0x67,0x17,0x15};
-    lora->SendData(myConfig,exampleData,4);
+    }
 
 } */
 
@@ -115,7 +112,6 @@ void loop() {
 #include <SoftwareSerial.h>
 #include "LoRa_config.h"
 #include "LoRa.h"
-#include "Parser.h"
 
 #define MY_RX 3
 #define MY_TX 2
@@ -128,7 +124,6 @@ LoRa_Current_Config* myConfig;
 SoftwareSerial* myLoraSerial;
 LoRaConfig* loraConfig;
 LoRaMain* lora;
-Parser dataParser;
 
 String loraMessageBuffer = "";
 
@@ -174,28 +169,13 @@ void setup() {
 }
 
 void loop() {
-        uint8_t reciveBufferData[4];
-        lora->ReciveData(myConfig,reciveBufferData,4);
-             
-        DataSet dataSet = dataParser.GetStatus(reciveBufferData);
+    
 
-        Serial.print("Channel: ");
-        Serial.println(dataSet.dataChannel);
+        lora->ReciveData(myConfig, &loraMessageBuffer);
 
-        Serial.print("Type: ");
-        Serial.println(dataSet.dataType);
-
-        Serial.print("Value: ");
-        Serial.println(dataSet.value);
-
-        
-        
-      
-
+        Serial.print("n4.val=");
+        Serial.print(loraMessageBuffer);
+        //Serial.print('\n');
+        NextionInit();
+        loraMessageBuffer = "";
 }
-
-
-
-
-
-
