@@ -259,49 +259,137 @@ LoRaMain::LoRaMain(LoRa_Current_Config* config){
     config->loraSerial->write(command,6);
 
 }
+/**
+ * @brief Set the transmission power for the LoRa module.
+ *
+ * This function sets the transmission power setting for the LoRa module.
+ * The LoRa module must be in sleep mode for this function to succeed.
+ *
+ * @param config The configuration structure for the LoRa module.
+ * @param transmisionPower The transmission power to set for the LoRa module.
+ */
 void LoRaMain::SetTransmissionPower(LoRa_Current_Config* config,TRANSMISSION_POWER transmisionPower){
     if (config->currentMode != SLEEP)
         return;
 
     config->transmisionPower = transmisionPower;  
 }
+/**
+ * @brief Set the forward error correction switch on the LoRa module.
+ * If FECEnable is true, FEC is enabled. If false, it is disabled.
+ * The LoRa module must be in sleep mode for this function to succeed.
+ */
 void LoRaMain::SetFecSwitch(LoRa_Current_Config* config,bool FECEnable){
     if (config->currentMode != SLEEP)
         return;
         
     config->FECEnable = FECEnable; 
 }
-void LoRaMain::SetWirlessWakeUpTime(LoRa_Current_Config* config,WIRLESS_WAKE_TIME){
+/**
+ * @brief Set the wireless wake-up time for the LoRa module.
+ *
+ * This function sets the wireless wake-up time setting for the LoRa module.
+ * The LoRa module must be in sleep mode for this function to succeed.
+ *
+ * @param config The configuration structure for the LoRa module.
+ * @param wakeUpTime The wireless wake-up time to set for the LoRa module.
+ */
+void LoRaMain::SetWirlessWakeUpTime(LoRa_Current_Config* config, WIRLESS_WAKE_TIME wakeUpTime) {
     if (config->currentMode != SLEEP)
         return;
+        
+    config->wirlessWakeUpTime = wakeUpTime;
 }
-void LoRaMain::SetIODriveMode(LoRa_Current_Config* config,bool){
+/**
+ * @brief Set the I/O Drive Mode switch on the LoRa module.
+ * If enable is true, the I/O drive mode is enabled. If false, it is disabled.
+ * The LoRa module must be in sleep mode for this function to succeed.
+ */
+void LoRaMain::SetIODriveMode(LoRa_Current_Config* config, bool enable) {
     if (config->currentMode != SLEEP)
         return;
+        
+    config->IODriveModeEnable = enable;
 }
-void LoRaMain::SetFixedTransmission(LoRa_Current_Config* config,bool){
+/**
+ * @brief Set the fixed transmission switch on the LoRa module.
+ * If enable is true, fixed transmission is enabled. If false, it is disabled.
+ * The LoRa module must be in sleep mode for this function to succeed.
+ */
+void LoRaMain::SetFixedTransmission(LoRa_Current_Config* config, bool enable) {
     if (config->currentMode != SLEEP)
         return;
+        
+    config->fixedTransmissionEnable = enable;
 }
-void LoRaMain::SetChannelFrequency(LoRa_Current_Config* config,uint8_t){
+/**
+ * @brief Set the channel frequency for the LoRa module.
+ *
+ * This function sets the channel frequency for the LoRa module.
+ * The LoRa module must be in sleep mode for this function to succeed.
+ * The valid channel range is typically 1-83.
+ *
+ * @param config The configuration structure for the LoRa module.
+ * @param frequency The channel frequency to set for the LoRa module.
+ */
+void LoRaMain::SetChannelFrequency(LoRa_Current_Config* config, uint8_t frequency) {
     if (config->currentMode != SLEEP)
         return;
+        
+    if (frequency > 0 && frequency <= 83) { // Valid channel range is typically 1-83
+        config->channelFrequency = frequency;
+    }
 }
-void LoRaMain::SetAirDataRate(LoRa_Current_Config* config,AIR_DATA_RATE){
+/**
+ * @brief Set the air data rate for the LoRa module.
+ *
+ * This function sets the air data rate for the LoRa module.
+ * The LoRa module must be in sleep mode for this function to succeed.
+ *
+ * @param config The configuration structure for the LoRa module.
+ * @param rate The air data rate to set for the LoRa module.
+ */
+void LoRaMain::SetAirDataRate(LoRa_Current_Config* config, AIR_DATA_RATE rate) {
     if (config->currentMode != SLEEP)
         return;
+        
+    config->airDataRate = rate;
 }
-void LoRaMain::SetBaudRate(LoRa_Current_Config* config,BAUD_RATE){
+/**
+ * @brief Set the baud rate for the LoRa module.
+ *
+ * This function sets the baud rate for the LoRa module.
+ * The LoRa module must be in sleep mode for this function to succeed.
+ */
+void LoRaMain::SetBaudRate(LoRa_Current_Config* config, BAUD_RATE rate) {
     if (config->currentMode != SLEEP)
         return;
+        
+    config->baudRate = rate;
 }
-void LoRaMain::SetParity(LoRa_Current_Config* config,PARITY_STATE){
+/**
+ * @brief Set the parity for the LoRa module.
+ *
+ * This function sets the parity for the LoRa module.
+ * The LoRa module must be in sleep mode for this function to succeed.
+ */
+void LoRaMain::SetParity(LoRa_Current_Config* config, PARITY_STATE parity) {
     if (config->currentMode != SLEEP)
         return;
+        
+    config->pairty = parity;
 }
-void LoRaMain::SetBrodcastTransmission(LoRa_Current_Config* config,bool){
-
+/**
+ * @brief Set the broadcast transmission switch on the LoRa module.
+ * If enable is true, broadcast transmission is enabled. If false, it is disabled.
+ * The LoRa module must be in sleep mode for this function to succeed.
+ */
+void LoRaMain::SetBrodcastTransmission(LoRa_Current_Config* config, bool enable) {
     if (config->currentMode != SLEEP)
         return;
+        
+    if (enable) {
+        config->adress = 0xFFFF; // Broadcast address
+    }
 }
 #pragma endregion

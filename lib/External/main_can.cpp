@@ -1,4 +1,4 @@
-#include <Arduino.h>
+/* #include <Arduino.h>
 #include "can.h"
 
 void setup()
@@ -19,4 +19,4 @@ void loop()
     }
     MCP2515::dataReader();
     MCP2515::errorMessages();
-}
+} */

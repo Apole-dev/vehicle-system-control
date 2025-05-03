@@ -12,6 +12,7 @@ class MCP2515
         static uint8_t csPinSlave;
         static uint8_t csPin;
         static String receivedMessage;
+        static String tempMessage;
 
         // message functions
 

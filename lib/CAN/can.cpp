@@ -4,12 +4,16 @@
 uint8_t csPin_g;
 uint8_t temperrorid = 13;
 String MCP2515::receivedMessage;
+String MCP2515::tempMessage;
 // mcp2515 initial functions
 
 void MCP2515::init(uint8_t csPin, uint8_t baudRate)
 {
+    pinMode(10,OUTPUT);
+    pinMode(csPin,OUTPUT);
+    digitalWrite(csPin,1);
     csPin_g = csPin;
-    Serial.begin(9600);
+    //Serial.begin(9600);
     SPI.begin();
     SPI.beginTransaction(SPISettings(1000000, MSBFIRST, SPI_MODE0));
     MCP2515::select(csPin);
@@ -109,6 +113,7 @@ void MCP2515::dataReader() {
         if(test == 1)
         {
             Serial.println(receivedMessage);
+            tempMessage = receivedMessage;
             receivedMessage = "";
             test = 0;
         }
@@ -134,6 +139,7 @@ void MCP2515::dataReader() {
         if(test == 1)
         {
             Serial.println(receivedMessage);
+            tempMessage = receivedMessage;
             receivedMessage = "";
             test = 0;
         }
