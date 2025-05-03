@@ -16,9 +16,11 @@ class MCP2515
 
         // message functions
 
-        static void messageTransmit(uint8_t t2 , uint8_t t3 , uint8_t t4 , uint8_t t5 , uint8_t t6 , uint8_t t7 , uint8_t t8);
+        static void messageTransmit(uint8_t i1 , uint8_t i2 , uint8_t i3 , uint8_t i4,uint8_t i5 , uint8_t i6 , uint8_t i7 , uint8_t i8);
         static void messageTransmit(String);
-        static void dataReader();
+        static void dataStringReader();
+        static int dataIntReader();
+        static int* dataArrayReader();
 
         // cspin functions
         

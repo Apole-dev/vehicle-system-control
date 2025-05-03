@@ -9,11 +9,11 @@ String MCP2515::tempMessage;
 
 void MCP2515::init(uint8_t csPin, uint8_t baudRate)
 {
-    pinMode(10,OUTPUT);
+    pinMode(10, OUTPUT);  // must be output to the SPI communication
     pinMode(csPin,OUTPUT);
     digitalWrite(csPin,1);
     csPin_g = csPin;
-    //Serial.begin(9600);
+    Serial.begin(9600);
     SPI.begin();
     SPI.beginTransaction(SPISettings(1000000, MSBFIRST, SPI_MODE0));
     MCP2515::select(csPin);
@@ -85,13 +85,29 @@ void MCP2515::messageTransmit(String input)
             MCP2515::writeRegister(54+i , modifiedInput[i+8*j]);
         }
         MCP2515::writeRegister(0x30, 0x08);
-        delay(5);
+        delay(50);
         j += 1;
     }
 }
+void MCP2515::messageTransmit(uint8_t i1 , uint8_t i2 , uint8_t i3 , uint8_t i4 , uint8_t i5 , uint8_t i6 , uint8_t i7 , uint8_t i8)
+{
+    MCP2515::writeRegister(0x31, 0x7D);  
+    MCP2515::writeRegister(0x32, 0xF0);  
+    MCP2515::writeRegister(0x35, 0x08);
+    MCP2515::writeRegister(54,i1);
+    MCP2515::writeRegister(55,i2);
+    MCP2515::writeRegister(56,i3);
+    MCP2515::writeRegister(57,i4);
+    MCP2515::writeRegister(58,i5);
+    MCP2515::writeRegister(59,i6);
+    MCP2515::writeRegister(60,i7);
+    MCP2515::writeRegister(61,i8);
+    MCP2515::writeRegister(0x30,0x08);
+    delay(50);
+}
 
 String received8byte;
-void MCP2515::dataReader() {
+void MCP2515::dataStringReader() {
     uint8_t intFlags = MCP2515::readRegister(0x2C); // Kesme bayraklarını oku
     int test = 0;
     if (intFlags & 0x01)  // RX0IF bayrağı ayarlandıysa
@@ -138,18 +154,61 @@ void MCP2515::dataReader() {
         receivedMessage += received8byte;
         if(test == 1)
         {
+  
             Serial.println(receivedMessage);
             tempMessage = receivedMessage;
+            //Serial.println(tempMessage);
             receivedMessage = "";
             test = 0;
         }
+        
         received8byte = "";
         MCP2515::writeRegister(0x2C, intFlags & ~0x02);
     }    
 }
+int MCP2515::dataIntReader() {
+    int integer[8];
+    uint8_t intFlags = MCP2515::readRegister(0x2C); // Kesme bayraklarını oku
+    if (intFlags & 0x01)  // RX0IF bayrağı ayarlandıysa
+    {
+        for(uint8_t i = 0; i < 8; i++)
+        {
+            integer[i] = (uint8_t)MCP2515::readRegister(0x66 + i);
+        }
+        MCP2515::writeRegister(0x2C, intFlags & ~0x01);
+    }
+    if (intFlags & 0x02)  // RX0IF bayrağı ayarlandıysa
+    {
+        for(uint8_t i = 0; i < 8; i++)
+        {
+            integer[i] = (uint8_t)MCP2515::readRegister(0x66 + i);
+        }
+        MCP2515::writeRegister(0x2C, intFlags & ~0x02);
+    }  
 
+}
 
-
+int* MCP2515::dataArrayReader(){
+    int* test = new int[8];
+    uint8_t intFlags = MCP2515::readRegister(0x2C); // Kesme bayraklarını oku
+    if (intFlags & 0x01)  // RX0IF bayrağı ayarlandıysa
+    {
+        for(uint8_t i = 0; i < 8; i++)
+        {
+            test[i] = (uint8_t)MCP2515::readRegister(0x66 + i);
+        }
+        MCP2515::writeRegister(0x2C, intFlags & ~0x01);
+    }
+    if (intFlags & 0x02)  // RX0IF bayrağı ayarlandıysa
+    {
+        for(uint8_t i = 0; i < 8; i++)
+        {
+            test[i] = (uint8_t)MCP2515::readRegister(0x66 + i);
+        }
+        MCP2515::writeRegister(0x2C, intFlags & ~0x02);
+    }  
+    return test;
+}
 //csPin function
  
 void MCP2515::select(uint8_t csPin)
